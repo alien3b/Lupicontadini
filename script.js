@@ -1,33 +1,24 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    text-align: center;
-}
+// Array dei ruoli disponibili
+const ruoli = [
+    "Ruolo 1",
+    "Ruolo 2",
+    "Ruolo 3",
+    "Ruolo 4",
+    "Ruolo 5"
+];
 
-#app {
-    background-color: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+// Funzione per distribuire i ruoli
+function distribuisciRuoli() {
+    const messaggio = document.getElementById("message");
+    const numeroRuoli = 7; // Numero di giocatori (modificabile)
 
-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 15px 32px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
+    // Distribuire casualmente i ruoli
+    let ruoliAssegnati = [];
+    for (let i = 0; i < numeroRuoli; i++) {
+        const ruolo = ruoli[Math.floor(Math.random() * ruoli.length)];
+        ruoliAssegnati.push(ruolo);
+    }
 
-button:hover {
-    background-color: #45a049;
+    // Mostrare i ruoli assegnati
+    messaggio.innerHTML = "Ruoli distribuiti: <br>" + ruoliAssegnati.join("<br>");
 }
