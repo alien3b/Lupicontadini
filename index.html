@@ -5,13 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Distribuzione Ruoli</title>
     <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
     <div id="app">
-        <h1>Distribuzione Ruoli</h1>
-        <p id="message">Premi il pulsante per distribuire i ruoli.</p>
-        <button onclick="distribuisciRuoli()">Distribuisci Ruoli</button>
+        <h1>Benvenuto nel Gioco</h1>
+        <p>Scegli il tuo ruolo:</p>
+        <button onclick="scegliRuolo('narratore')">Narratore</button>
+        <button onclick="scegliRuolo('giocatore')">Giocatore</button>
+
+        <!-- Sezione del narratore -->
+        <div id="narratore" style="display: none;">
+            <h2>Ciao, Narratore!</h2>
+            <label for="numeroGiocatori">Numero di Giocatori:</label>
+            <input type="number" id="numeroGiocatori" min="1" max="10" value="7">
+            <br>
+            <button onclick="distribuisciRuoli()">Distribuisci Ruoli</button>
+        </div>
+
+        <!-- Sezione del giocatore -->
+        <div id="giocatore" style="display: none;">
+            <h2>Ciao, Giocatore!</h2>
+            <p id="ruoloGiocatore"></p>
+        </div>
+
+        <p id="message"></p>
     </div>
-    <script src="script.js"></script>
 </body>
 </html>
