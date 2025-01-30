@@ -33,20 +33,10 @@ button:hover {
     background-color: #45a049;
 }
 
-#narratore, #giocatore {
-    margin-top: 20px;
-}
-
-input[type="number"] {
-    padding: 5px;
+input {
+    padding: 10px;
     font-size: 16px;
     margin-top: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-}
-
-p {
-    font-size: 18px;
-    color: #333;
-    margin-top: 10px;
 }
