@@ -1,115 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Distribuzione Ruoli</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="app">
-        <h2>Scegli il tuo ruolo</h2>
-        <button onclick="chooseRole('narrator')">Narratore</button>
-        <button onclick="chooseRole('player')">Giocatore</button>
+        <h2>Benvenuto!</h2>
+        <input type="text" id="sala" placeholder="Nome della sala">
+        <button onclick="creaSala()">Crea Sala</button>
+        <h3>Sale disponibili:</h3>
+        <ul id="sale-list"></ul>
+        <div id="giocatori" style="display: none;">
+            <input type="text" id="nickname" placeholder="Inserisci il tuo nome">
+            <button onclick="uniscitiGioco()">Unisciti</button>
+            <h3>Giocatori nella sala:</h3>
+            <ul id="giocatori-list"></ul>
+            <button onclick="assegnaRuoli()">Assegna Ruoli</button>
+        </div>
     </div>
-
-    <div id="narratorOptions" style="display:none;">
-        <h2>Come narratore, configura la partita</h2>
-        <label for="numPlayers">Numero di giocatori:</label>
-        <input type="number" id="numPlayers" min="1" max="15" />
-        <br />
-        <label for="role1">Contadini:</label>
-        <input type="number" id="role1" min="0" />
-        <br />
-        <label for="role2">Lupi:</label>
-        <input type="number" id="role2" min="0" />
-        <br />
-        <label for="role3">Veggenti:</label>
-        <input type="number" id="role3" min="0" />
-        <br />
-        <button onclick="startGame()">Inizia il Gioco</button>
-    </div>
-
-    <div id="playerOptions" style="display:none;">
-        <h2>Inserisci il tuo nome</h2>
-        <input type="text" id="playerName" />
-        <button onclick="joinGame()">Unisciti al Gioco</button>
-    </div>
-
-    <div id="gameResults" style="display:none;">
-        <h2>Ruolo Assegnato</h2>
-        <p id="assignedRole"></p>
-    </div>
-
-    <script>
-        let players = [];
-        let roles = [];
-        let numPlayers = 0;
-        let currentPlayer = null;
-
-        function chooseRole(role) {
-            if (role === 'narrator') {
-                document.getElementById('narratorOptions').style.display = 'block';
-                document.getElementById('app').style.display = 'none';
-            } else {
-                document.getElementById('playerOptions').style.display = 'block';
-                document.getElementById('app').style.display = 'none';
-                currentPlayer = 'player';
-            }
-        }
-
-        function startGame() {
-            numPlayers = document.getElementById('numPlayers').value;
-            roles = [
-                { name: "Contadino", quantity: parseInt(document.getElementById('role1').value) },
-                { name: "Lupo", quantity: parseInt(document.getElementById('role2').value) },
-                { name: "Veggente", quantity: parseInt(document.getElementById('role3').value) }
-            ];
-            document.getElementById('narratorOptions').style.display = 'none';
-            document.getElementById('playerOptions').style.display = 'block';
-        }
-
-        function joinGame() {
-            let name = document.getElementById('playerName').value;
-            players.push(name);
-            if (players.length === numPlayers) {
-                assignRoles();
-            }
-        }
-
-        function assignRoles() {
-            let allRoles = [];
-            roles.forEach(role => {
-                for (let i = 0; i < role.quantity; i++) {
-                    allRoles.push(role.name);
-                }
-            });
-
-            // Shuffle roles randomly
-            allRoles = shuffle(allRoles);
-
-            let roleAssignments = {};
-            players.forEach((player, index) => {
-                roleAssignments[player] = allRoles[index];
-            });
-
-            if (currentPlayer === 'player') {
-                document.getElementById('assignedRole').innerText = `Il tuo ruolo è: ${roleAssignments[players[players.length - 1]]}`;
-                document.getElementById('gameResults').style.display = 'block';
-            }
-
-            if (currentPlayer === 'narrator') {
-                console.log(roleAssignments); // For the narrator to see all assignments
-            }
-        }
-
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
