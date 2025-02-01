@@ -1,108 +1,83 @@
-let isNarrator = false;
-let players = [];
-let roles = {};
-let rolesAssigned = false;
+// Controlla se ci sono sale in cache
+let sale = JSON.parse(localStorage.getItem("sale")) || {};
+aggiornaListaSale();
 
-// Gestisce la scelta del ruolo (Narratore o Giocatore)
-function selectRole(role) {
-    if (role === 'narrator') {
-        isNarrator = true;
-        document.getElementById('narratorOptions').style.display = 'block';
-        document.getElementById('playerOptions').style.display = 'none';
-        document.getElementById('gameResults').style.display = 'none';
-    } else {
-        isNarrator = false;
-        document.getElementById('narratorOptions').style.display = 'none';
-        document.getElementById('playerOptions').style.display = 'block';
-        document.getElementById('gameResults').style.display = 'none';
+// Crea una nuova sala e la memorizza
+function creaSala() {
+    let nomeSala = document.getElementById("sala").value.trim();
+    if (nomeSala && !sale[nomeSala]) {
+        sale[nomeSala] = { giocatori: [] };
+        localStorage.setItem("sale", JSON.stringify(sale));
+        aggiornaListaSale();
     }
 }
 
-// Aggiunge un giocatore alla lista
-function addPlayer() {
-    const playerName = document.getElementById('playerName').value;
-    if (playerName) {
-        players.push(playerName);
-        document.getElementById('playerName').value = ''; // Reset campo
-        updatePlayersList();
+// Mostra le sale disponibili
+function aggiornaListaSale() {
+    let lista = document.getElementById("sale-list");
+    lista.innerHTML = "";
+    Object.keys(sale).forEach(sala => {
+        let li = document.createElement("li");
+        li.textContent = sala;
+        li.onclick = () => entraSala(sala);
+        lista.appendChild(li);
+    });
+}
+
+// Entra in una sala e mostra la sezione dei giocatori
+function entraSala(nomeSala) {
+    localStorage.setItem("salaAttuale", nomeSala);
+    document.getElementById("giocatori").style.display = "block";
+}
+
+// Aggiunge il giocatore alla sala
+function uniscitiGioco() {
+    let nomeSala = localStorage.getItem("salaAttuale");
+    let nickname = document.getElementById("nickname").value.trim();
+    if (nickname && !sale[nomeSala].giocatori.includes(nickname)) {
+        sale[nomeSala].giocatori.push(nickname);
+        localStorage.setItem("sale", JSON.stringify(sale));
+        aggiornaListaGiocatori(nomeSala);
     }
 }
 
-// Aggiorna la lista dei giocatori
-function updatePlayersList() {
-    const playerList = document.getElementById('playerList');
-    playerList.innerHTML = players.map(player => `<li>${player}</li>`).join('');
+// Aggiorna la lista dei giocatori in sala
+function aggiornaListaGiocatori(nomeSala) {
+    let lista = document.getElementById("giocatori-list");
+    lista.innerHTML = "";
+    sale[nomeSala].giocatori.forEach(giocatore => {
+        let li = document.createElement("li");
+        li.textContent = giocatore;
+        lista.appendChild(li);
+    });
 }
 
-// Se il narratore è pronto a impostare le opzioni
-function setRoles() {
-    const numPlayers = parseInt(document.getElementById('numPlayers').value);
-    const rolesData = [
-        { role: 'Lupo', count: parseInt(document.getElementById('roleLupo').value) },
-        { role: 'Contadino', count: parseInt(document.getElementById('roleContadino').value) },
-        { role: 'Veggente', count: parseInt(document.getElementById('roleVeggente').value) },
-    ];
+// Assegna ruoli casuali e salva in CSV
+function assegnaRuoli() {
+    let nomeSala = localStorage.getItem("salaAttuale");
+    let ruoli = ["Lupo", "Contadino", "Veggente", "Cacciatore", "Guaritore"];
+    let giocatori = sale[nomeSala].giocatori;
+    let distribuzione = {};
 
-    roles = {};
-    rolesData.forEach(data => {
-        roles[data.role] = data.count;
+    // Assegna ruoli a caso
+    giocatori.forEach(giocatore => {
+        let ruolo = ruoli[Math.floor(Math.random() * ruoli.length)];
+        distribuzione[giocatore] = ruolo;
     });
 
-    document.getElementById('narratorOptions').style.display = 'none';
-    document.getElementById('playerOptions').style.display = 'block';
-    rolesAssigned = true;
-}
+    // Mostra i ruoli assegnati (solo per il narratore)
+    console.log("Ruoli assegnati:", distribuzione);
 
-// Assegna i ruoli casualmente ai giocatori
-function assignRoles() {
-    if (!rolesAssigned) return;
-
-    const shuffledPlayers = [...players];
-    const assignedRoles = [];
-
-    // Assegna i ruoli ai giocatori
-    for (const role in roles) {
-        for (let i = 0; i < roles[role]; i++) {
-            const player = shuffledPlayers.pop();
-            assignedRoles.push({ player, role });
-        }
-    }
-
-    // Mostra il risultato per il narratore
-    let resultHtml = '<h2>Ruoli Assegnati</h2><ul>';
-    assignedRoles.forEach(item => {
-        resultHtml += `<li>${item.player} - ${item.role}</li>`;
+    // Salva in CSV
+    let csvContent = "data:text/csv;charset=utf-8,Giocatore,Ruolo\n";
+    Object.entries(distribuzione).forEach(([giocatore, ruolo]) => {
+        csvContent += `${giocatore},${ruolo}\n`;
     });
-    resultHtml += '</ul>';
 
-    document.getElementById('gameResults').innerHTML = resultHtml;
-    document.getElementById('gameResults').style.display = 'block';
-    document.getElementById('playerOptions').style.display = 'none';
-}
-
-// Mostra i risultati per ogni giocatore
-function viewRole() {
-    if (!rolesAssigned || isNarrator) return;
-
-    const playerName = players[players.length - 1]; // Ultimo giocatore
-    const assignedRole = assignRoleToPlayer(playerName);
-
-    alert(`Il tuo ruolo è: ${assignedRole}`);
-}
-
-// Assegna un ruolo a un giocatore
-function assignRoleToPlayer(player) {
-    const assignedRole = assignedRoles.find(item => item.player === player);
-    return assignedRole ? assignedRole.role : 'Nessun ruolo assegnato';
-}
-
-// Gestione del flusso
-function startGame() {
-    if (isNarrator) {
-        document.getElementById('narratorOptions').style.display = 'block';
-        document.getElementById('playerOptions').style.display = 'none';
-    } else {
-        document.getElementById('playerOptions').style.display = 'block';
-        document.getElementById('narratorOptions').style.display = 'none';
-    }
+    let encodedUri = encodeURI(csvContent);
+    let link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `${nomeSala}_ruoli.csv`);
+    document.body.appendChild(link);
+    link.click();
 }
